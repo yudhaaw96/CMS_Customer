@@ -1,12 +1,17 @@
 <template>
-  <div>
-    <img alt="Vue logo" src="../assets/logo.png" />
-  </div>
+  <b-container>
+    <ProductsCard />
+  </b-container>
 </template>
 
 <script>
+import ProductsCard from '@/components/ProductsCard.vue'
+
 export default {
-  name: 'Home'
+  name: 'Home',
+  components: {
+    ProductsCard
+  }
 }
 </script>
 

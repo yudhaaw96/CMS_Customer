@@ -27,6 +27,16 @@
           ></b-nav-item
         >
         <b-nav-item
+          ><b-button v-if="isSignedIn" @click="goToCartRoute" variant="light"
+            >Cart</b-button
+          ></b-nav-item
+        >
+        <b-nav-item
+          ><b-button v-if="isSignedIn" @click="goToHistoryRoute" variant="light"
+            >Purchase History</b-button
+          ></b-nav-item
+        >
+        <b-nav-item
           ><b-button
             v-if="isSignedIn"
             @click="showMsgBoxSignOut"
@@ -52,6 +62,12 @@ export default {
     goToSignUpRoute () {
       this.$router.push('/signup')
     },
+    goToCartRoute () {
+      this.$router.push('/cart')
+    },
+    goToHistoryRoute () {
+      this.$router.push('/history')
+    },
     showMsgBoxSignOut () {
       this.$bvModal
         .msgBoxConfirm('Are you sure want to sign out?', {
@@ -65,7 +81,7 @@ export default {
           }
         })
         .catch(err => {
-          console.log(err)
+          console.log(err.response)
         })
     },
     signOutUser () {
