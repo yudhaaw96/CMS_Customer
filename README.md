@@ -1,4 +1,17 @@
-# CMS_Customer
+# CMS_customer
+
+## Authors
+
+- **Yudha Arief Wijaya** - _Dev_ - [Github](https://github.com/yudhaaw96)
+- Priambodo Kurniawan - Buddy Helper
+
+## Client URL :
+
+https://client-e-commerce-yudhaaw96.firebaseapp.com/ (status : active)
+
+## Server URL :
+
+https://server-cms-ecommerce-yudhaaw96.herokuapp.com/ (status : active)
 
 ## Project setup
 ```
