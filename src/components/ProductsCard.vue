@@ -20,21 +20,56 @@
           img-top
         >
           <b-card-text class="text-success font-weight-bold">
-            Price: {{ product.price }}<br />
+            Price: {{ currencyFormater(product.price) }}<br />
             Stock: {{ product.stock }}<br />
           </b-card-text>
+          <b-button @click="selectProduct(product)" v-b-modal.addtocart variant="outline-success"><font-awesome-icon icon="cart-arrow-down" /> Add to Cart</b-button>
         </b-card>
+          <b-modal
+            id="addtocart"
+            ref="modal"
+            :title="selectedProductName"
+            ok-title="Add to Cart"
+            centered
+            header-bg-variant="info"
+            header-text-variant="light"
+            @ok="buy"
+          >
+            <form ref="form">
+              <b-img :src="selectedProductImage" center rounded="circle" width="200%"></b-img>
+              <b-form-group
+                label="Qty"
+                label-for="qty-input"
+                invalid-feedback="Quantity is required"
+              >
+                <b-form-input
+                  id="qty-input"
+                  type="number"
+                  min="1"
+                  placeholder="1"
+                  v-model="quantity"
+                  required
+                ></b-form-input>
+              </b-form-group>
+            </form>
+          </b-modal>
       </div>
     </b-col>
   </b-row>
 </template>
 
 <script>
+import currencyFormater from '@/helpers/currency.js'
+
 export default {
   name: 'ProductCard',
   data () {
     return {
-      isHidden: false
+      isHidden: false,
+      quantity: 1,
+      selectedProductName: '',
+      selectedProductImage: '',
+      error: 'Dear Customer..'
     }
   },
   methods: {
@@ -48,11 +83,35 @@ export default {
           console.log(err.response)
         })
     },
-    buy (product) {
+    currencyFormater (money) {
+      return currencyFormater(money)
+    },
+    selectProduct (product) {
+      this.quantity = 1
+      this.$store.commit('SET_SELECTED_PRODUCT', product)
+      this.selectedProductName = product.name
+      this.selectedProductImage = product.image_url
+    },
+    buy () {
+      const payload = {
+        ProductId: this.$store.state.selectedProduct.id,
+        quantity: this.quantity
+      }
       this.$store
-        .dispatch('addtocart')
-        .then(({ data }) => {})
+        .dispatch('addtocart', payload)
+        .then(({ data }) => {
+          this.$swal.fire(
+            `Item's added "${this.selectedProductName}"`,
+            'You just added an item!',
+            'success'
+          )
+        })
         .catch(err => {
+          this.$swal.fire(
+            `${this.error}`,
+            `"${err.response.data.message}"`,
+            'warning'
+          )
           console.log(err.response)
         })
     }
@@ -63,6 +122,9 @@ export default {
     },
     isSignedIn () {
       return this.$store.state.isSignedIn
+    },
+    selectedProduct () {
+      return this.$store.state.selectedProduct
     }
   },
   created () {

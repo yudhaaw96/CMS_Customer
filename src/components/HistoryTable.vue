@@ -2,7 +2,7 @@
   <div>
     <div>
       <h3>
-        <font-awesome-icon icon="cubes" /> Purchased items (total:
+        <font-awesome-icon icon="history" /> Purchased items (total:
         {{ totalItems }})
       </h3>
       <b-row>

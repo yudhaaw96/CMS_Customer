@@ -9,7 +9,8 @@ export default new Vuex.Store({
     isSignedIn: false,
     products: [],
     cart: [],
-    cartPaid: []
+    cartPaid: [],
+    selectedProduct: null
   },
   mutations: {
     SET_SIGNED_IN (state, options) {
@@ -23,6 +24,9 @@ export default new Vuex.Store({
     },
     SET_CART_PAID (state, payload) {
       state.cartPaid = payload
+    },
+    SET_SELECTED_PRODUCT (state, payload) {
+      state.selectedProduct = payload
     }
   },
   actions: {
@@ -64,10 +68,29 @@ export default new Vuex.Store({
         }
       })
     },
+    addtocart (context, payload) {
+      return axiosShot({
+        method: 'post',
+        url: '/cart',
+        data: payload,
+        headers: {
+          access_token: localStorage.getItem('access_token')
+        }
+      })
+    },
     deleteanitem (context, payload) {
       return axiosShot({
         method: 'delete',
         url: '/cart/items/' + payload,
+        headers: {
+          access_token: localStorage.getItem('access_token')
+        }
+      })
+    },
+    checkout (context, payload) {
+      return axiosShot({
+        method: 'put',
+        url: '/cart/checkout',
         headers: {
           access_token: localStorage.getItem('access_token')
         }

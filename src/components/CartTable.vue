@@ -1,8 +1,12 @@
 <template>
   <div>
+    <b-button @click="checkout" block variant="success"
+      ><h1><font-awesome-icon icon="shopping-basket" /> Checkout</h1></b-button
+    >
+    <hr />
     <div>
       <h3>
-        <font-awesome-icon icon="cubes" /> Your Cart's items (unpaid:
+        <font-awesome-icon icon="shopping-cart" /> Your Cart's items (unpaid:
         {{ totalItems }})
       </h3>
       <b-row>
@@ -113,7 +117,10 @@ export default {
         { key: 'TotalPrice', sortable: true },
         { key: 'id', label: 'Options' }
       ],
-      boxDelete: ''
+      boxDelete: '',
+      successDelete: 'Success Delete',
+      successCheckout: 'Thank you!',
+      errorCheckout: 'Opps!'
     }
   },
   methods: {
@@ -130,19 +137,40 @@ export default {
     convertToCurrency (money) {
       return currency(money)
     },
+    checkout () {
+      this.$store
+        .dispatch('checkout')
+        .then(({ data }) => {
+          this.$swal.fire(
+            `${this.successCheckout}`,
+            'Your items will be delivered soon!',
+            'success'
+          )
+          this.$router.push('/history')
+        })
+        .catch(err => {
+          this.fetchCart()
+          this.$swal.fire(
+            `${this.errorCheckout}`,
+            `"${err.response.data.message}"`,
+            'error'
+          )
+        })
+    },
     showMsgBoxDelete (id) {
       this.boxDelete = ''
-      this.$bvModal.msgBoxConfirm('Please confirm that you want to delete?', {
-        title: 'Please confirm',
-        size: 'sm',
-        buttonSize: 'sm',
-        okVariant: 'danger',
-        okTitle: 'YES',
-        cancelTitle: 'NO',
-        footerClass: 'p-2',
-        hideHeaderClose: false,
-        centered: true
-      })
+      this.$bvModal
+        .msgBoxConfirm('Please confirm that you want to delete?', {
+          title: 'Please confirm',
+          size: 'sm',
+          buttonSize: 'sm',
+          okVariant: 'danger',
+          okTitle: 'YES',
+          cancelTitle: 'NO',
+          footerClass: 'p-2',
+          hideHeaderClose: false,
+          centered: true
+        })
         .then(value => {
           this.boxDelete = value
           if (value === true) {
@@ -150,23 +178,22 @@ export default {
           }
         })
         .catch(err => {
-          console.log(err)
+          console.log(err.response)
         })
     },
     deleteProduct (id) {
       this.$store
         .dispatch('deleteanitem', id)
         .then(({ data }) => {
-          const deletedItemName = data.DeletedItem.name
           this.fetchCart()
           this.$swal.fire(
-            `Success delete "${deletedItemName}"`,
+            `${this.successDelete}`,
             'You just deleted an item!',
             'success'
           )
         })
         .catch(({ err }) => {
-          console.log(err)
+          console.log(err.response)
         })
     }
   },
@@ -199,4 +226,9 @@ export default {
 }
 </script>
 
-<style></style>
+<style>
+.table > tbody > tr > td {
+  vertical-align: middle;
+  background-color: rgba(0, 0, 0, 0.02);
+}
+</style>
