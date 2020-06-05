@@ -25,6 +25,7 @@
           </b-card-text>
           <b-button @click="selectProduct(product)" v-b-modal.addtocart variant="outline-success"><font-awesome-icon icon="cart-arrow-down" /> Add to Cart</b-button>
         </b-card>
+        <!-- MODAL -->
           <b-modal
             id="addtocart"
             ref="modal"

@@ -79,6 +79,10 @@
           {{ convertToCurrency(data.value) }}
         </template>
         <template v-slot:cell(id)="data">
+          <b-button variant="warning" v-b-modal.edititem @click="selectProduct(data.value)"
+            ><font-awesome-icon icon="sort-numeric-up" /> Update Qty</b-button
+          >
+          -
           <b-button variant="danger" @click="showMsgBoxDelete(data.value.id)"
             ><font-awesome-icon icon="trash-alt" /> Delete</b-button
           >
@@ -93,6 +97,34 @@
         aria-controls="my-table"
       ></b-pagination>
     </div>
+    <!-- MODAL -->
+    <b-modal
+      id="edititem"
+      ref="modal"
+      :title="selectedProductName"
+      ok-title="Update item quantity"
+      centered
+      header-bg-variant="info"
+      header-text-variant="light"
+      @ok="updateItem"
+    >
+      <form ref="form">
+        <b-img :src="selectedProductImage" center rounded="circle" width="200%"></b-img>
+        <b-form-group
+          label="Qty"
+          label-for="qty-input"
+          invalid-feedback="Quantity is required"
+        >
+          <b-form-input
+            id="qty-input"
+            type="number"
+            min="1"
+            v-model="quantity"
+            required
+          ></b-form-input>
+        </b-form-group>
+      </form>
+    </b-modal>
   </div>
 </template>
 
@@ -120,7 +152,12 @@ export default {
       boxDelete: '',
       successDelete: 'Success Delete',
       successCheckout: 'Thank you!',
-      errorCheckout: 'Opps!'
+      errorCheckout: 'Opps!',
+      selectedProductName: '',
+      selectedProductImage: '',
+      selectedCartItemId: null,
+      quantity: 1,
+      errorUpdate: 'Ouch!'
     }
   },
   methods: {
@@ -136,6 +173,38 @@ export default {
     },
     convertToCurrency (money) {
       return currency(money)
+    },
+    selectProduct (product) {
+      this.quantity = product.qty
+      this.$store.commit('SET_SELECTED_PRODUCT', product)
+      this.selectedCartItemId = product.id
+      this.selectedProductName = product.product.name
+      this.selectedProductImage = product.product.image_url
+    },
+    updateItem () {
+      const payload = {
+        id: this.selectedCartItemId,
+        quantity: parseInt(this.quantity)
+      }
+      console.log(payload)
+      this.$store.dispatch('updateitem', payload)
+        .then(({ data }) => {
+          this.$swal.fire(
+            `Item's updated "${this.selectedProductName}"`,
+            'You just update an item\'s quantity!',
+            'success'
+          )
+          this.fetchCart()
+        })
+        .catch(err => {
+          this.$swal.fire(
+            `${this.errorUpdate}`,
+            `"${err.response.data.message}"`,
+            'warning'
+          )
+          this.fetchCart()
+          console.log(err.response)
+        })
     },
     checkout () {
       this.$store
@@ -207,7 +276,7 @@ export default {
           Image: el.Product.image_url,
           Quantity: el.quantity,
           TotalPrice: el.Product.price * el.quantity,
-          id: { id: el.id, qty: el.quantity }
+          id: { id: el.id, qty: el.quantity, product: el.Product }
         })
         totalPrice += el.Product.price * el.quantity
       })

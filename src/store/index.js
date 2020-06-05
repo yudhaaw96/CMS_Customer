@@ -78,6 +78,16 @@ export default new Vuex.Store({
         }
       })
     },
+    updateitem (context, payload) {
+      return axiosShot({
+        method: 'put',
+        url: '/cart/items/edit/' + payload.id,
+        headers: {
+          access_token: localStorage.getItem('access_token')
+        },
+        data: { quantity: payload.quantity }
+      })
+    },
     deleteanitem (context, payload) {
       return axiosShot({
         method: 'delete',
