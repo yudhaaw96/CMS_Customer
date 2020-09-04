@@ -1,4 +1,4 @@
-# CMS_customer
+# E-commerce_CMS_Customer
 
 ## Authors
 
