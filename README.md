@@ -7,11 +7,11 @@
 
 ## Client URL :
 
-https://client-e-commerce-yudhaaw96.firebaseapp.com/ (status : active)
+https:// (status : inactive)
 
 ## Server URL :
 
-https://server-cms-ecommerce-yudhaaw96.herokuapp.com/ (status : active)
+https:// (status : inactive)
 
 ## Project setup
 ```
